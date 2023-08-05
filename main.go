@@ -8,6 +8,8 @@ import (
 
 func main() {
 	connections.NewMySqlConnection()
+	defer connections.Close()
+
 	router := echo.New()
 
 	products.RegisterRoutes(router)

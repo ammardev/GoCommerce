@@ -12,12 +12,11 @@ import (
 var DB *sql.DB
 
 func NewMySqlConnection() {
-	DB, err := sql.Open("mysql", buildDatasource())
+	var err error
+	DB, err = sql.Open("mysql", buildDatasource())
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	defer DB.Close()
 
 	setConnectionSettings()
 }
