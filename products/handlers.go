@@ -1,33 +1,14 @@
 package products
 
 import (
+	"log"
 	"net/http"
-	"strconv"
 
+	"github.com/ammardev/ecommerce-playground/connections"
 	"github.com/labstack/echo/v4"
 )
 
-var products []Product
-
 func RegisterRoutes(router *echo.Echo) {
-	products = []Product{
-		{
-			ID:          1,
-			Title:       "test",
-			Description: "test test",
-		},
-		{
-			ID:          2,
-			Title:       "IPhone",
-			Description: "Apple IPhone",
-		},
-		{
-			ID:          3,
-			Title:       "Macbook",
-			Description: "Apple Macbook",
-		},
-	}
-
 	router.GET("/products", listProducts)
 	router.GET("/products/:id", showProduct)
 	router.POST("/products", createProduct)
@@ -36,19 +17,32 @@ func RegisterRoutes(router *echo.Echo) {
 }
 
 func listProducts(c echo.Context) error {
+	rows, err := connections.DB.Query("select * from products")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	products := []Product{}
+
+	for rows.Next() {
+		product := Product{}
+		rows.Scan(&product.ID, &product.Title, &product.Description, &product.Price)
+		products = append(products, product)
+	}
+
 	return c.JSON(http.StatusOK, products)
 }
 
 func showProduct(c echo.Context) error {
-	productID, _ := strconv.Atoi(c.Param("id"))
-
-	for _, product := range products {
-		if product.ID == productID {
-			return c.JSON(http.StatusOK, product)
-		}
+	row := connections.DB.QueryRow("select * from products where id = ?", c.Param("id"))
+	product := Product{}
+	err := row.Scan(&product.ID, &product.Title, &product.Description, &product.Price)
+	if err != nil {
+		return echo.ErrNotFound
 	}
 
-	return echo.ErrNotFound
+	return c.JSON(http.StatusOK, product)
 }
 
 func createProduct(c echo.Context) error {
