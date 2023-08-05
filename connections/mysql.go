@@ -9,19 +9,31 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+var DB *sql.DB
+
 func NewMySqlConnection() {
+	DB, err := sql.Open("mysql", buildDatasource())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer DB.Close()
+
+	setConnectionSettings()
+}
+
+func buildDatasource() string {
 	dataSourceName := app.GetEnv("DB_USER", "root") + ":"
 	dataSourceName += app.GetEnv("DB_PASSWORD", "") + "@tcp("
 	dataSourceName += app.GetEnv("DB_HOST", "127.0.0.1") + ":"
 	dataSourceName += app.GetEnv("DB_PORT", "3306") + ")/"
 	dataSourceName += app.GetEnv("DB_DATABASE", "")
 
-	db, err := sql.Open("mysql", dataSourceName)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return dataSourceName
+}
 
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
+func setConnectionSettings() {
+	DB.SetConnMaxLifetime(time.Minute * 3)
+	DB.SetMaxOpenConns(10)
+	DB.SetMaxIdleConns(10)
 }
