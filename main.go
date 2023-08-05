@@ -1,11 +1,13 @@
 package main
 
 import (
+	"github.com/ammardev/ecommerce-playground/connections"
 	"github.com/ammardev/ecommerce-playground/products"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
+	connections.NewMySqlConnection()
 	router := echo.New()
 
 	products.RegisterRoutes(router)
