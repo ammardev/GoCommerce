@@ -52,5 +52,12 @@ func updateProduct(c echo.Context) error {
 }
 
 func deleteProduct(c echo.Context) error {
-	return c.String(http.StatusOK, "deleting product")
+	_, err := connections.DB.Exec("delete from products where id = ?", c.Param("id"))
+	if err != nil {
+		log.Fatalf("%+v\n", err)
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Success",
+	})
 }
