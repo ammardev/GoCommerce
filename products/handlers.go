@@ -44,6 +44,14 @@ func showProduct(c echo.Context) error {
 }
 
 func createProduct(c echo.Context) error {
+	product := Product{}
+	c.Bind(&product)
+
+	_, err := connections.DB.NamedExec("insert into products (title, description, price) values (:title, :description, :price)", &product)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return c.String(http.StatusOK, "creating product")
 }
 
