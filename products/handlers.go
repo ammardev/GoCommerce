@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/ammardev/ecommerce-playground/connections"
 	"github.com/labstack/echo/v4"
@@ -52,11 +53,20 @@ func createProduct(c echo.Context) error {
 		log.Fatal(err)
 	}
 
-	return c.String(http.StatusOK, "creating product")
+	return c.JSON(http.StatusCreated, product)
 }
 
 func updateProduct(c echo.Context) error {
-	return c.String(http.StatusOK, "updating product")
+	product := Product{}
+	c.Bind(&product)
+	product.ID, _ = strconv.Atoi(c.Param("id"))
+
+	_, err := connections.DB.NamedExec("update products set title=:title, description=:description, price=:price where id=:id", &product)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return c.JSON(http.StatusOK, product)
 }
 
 func deleteProduct(c echo.Context) error {
