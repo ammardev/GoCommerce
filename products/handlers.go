@@ -1,6 +1,7 @@
 package products
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 
@@ -17,29 +18,26 @@ func RegisterRoutes(router *echo.Echo) {
 }
 
 func listProducts(c echo.Context) error {
-	rows, err := connections.DB.Query("select * from products")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
 	products := []Product{}
 
-	for rows.Next() {
-		product := Product{}
-		rows.Scan(&product.ID, &product.Title, &product.Description, &product.Price)
-		products = append(products, product)
+	err := connections.DB.Select(&products, "select * from products")
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return c.JSON(http.StatusOK, products)
 }
 
 func showProduct(c echo.Context) error {
-	row := connections.DB.QueryRow("select * from products where id = ?", c.Param("id"))
 	product := Product{}
-	err := row.Scan(&product.ID, &product.Title, &product.Description, &product.Price)
-	if err != nil {
+	err := connections.DB.Get(&product, "select * from products where id = ?", c.Param("id"))
+
+	if err == sql.ErrNoRows {
 		return echo.ErrNotFound
+	}
+
+	if err != nil {
+		log.Fatalf("%+v\n", err)
 	}
 
 	return c.JSON(http.StatusOK, product)

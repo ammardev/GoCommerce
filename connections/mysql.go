@@ -1,19 +1,19 @@
 package connections
 
 import (
-	"database/sql"
 	"log"
 	"time"
 
 	"github.com/ammardev/ecommerce-playground/app"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 )
 
-var DB *sql.DB
+var DB *sqlx.DB
 
 func NewMySqlConnection() {
 	var err error
-	DB, err = sql.Open("mysql", buildDatasource())
+	DB, err = sqlx.Open("mysql", buildDatasource())
 	if err != nil {
 		log.Fatal(err)
 	}
