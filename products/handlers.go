@@ -48,7 +48,12 @@ func createProduct(c echo.Context) error {
 	product := Product{}
 	c.Bind(&product)
 
-	_, err := connections.DB.NamedExec("insert into products (title, description, price) values (:title, :description, :price)", &product)
+	result, err := connections.DB.NamedExec("insert into products (title, description, price) values (:title, :description, :price)", &product)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	product.ID, err = result.LastInsertId()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,7 +64,7 @@ func createProduct(c echo.Context) error {
 func updateProduct(c echo.Context) error {
 	product := Product{}
 	c.Bind(&product)
-	product.ID, _ = strconv.Atoi(c.Param("id"))
+	product.ID, _ = strconv.ParseInt(c.Param("id"), 10, 64)
 
 	_, err := connections.DB.NamedExec("update products set title=:title, description=:description, price=:price where id=:id", &product)
 	if err != nil {
