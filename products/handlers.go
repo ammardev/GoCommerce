@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ammardev/ecommerce-playground/connections"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,9 +18,9 @@ func RegisterRoutes(router *echo.Echo) {
 }
 
 func listProducts(c echo.Context) error {
-	products := []Product{}
+	products := Products{}
 
-	err := connections.DB.Select(&products, "select * from products")
+	err := products.Select()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,9 +29,12 @@ func listProducts(c echo.Context) error {
 }
 
 func showProduct(c echo.Context) error {
-	product := Product{}
-	err := connections.DB.Get(&product, "select * from products where id = ?", c.Param("id"))
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	product := Product{
+		ID: id,
+	}
 
+	err := product.Load()
 	if err == sql.ErrNoRows {
 		return echo.ErrNotFound
 	}
@@ -48,25 +50,19 @@ func createProduct(c echo.Context) error {
 	product := Product{}
 	c.Bind(&product)
 
-	result, err := connections.DB.NamedExec("insert into products (title, description, price) values (:title, :description, :price)", &product)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	product.ID, err = result.LastInsertId()
-	if err != nil {
-		log.Fatal(err)
-	}
+	product.Save()
 
 	return c.JSON(http.StatusCreated, product)
 }
 
 func updateProduct(c echo.Context) error {
-	product := Product{}
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	product := Product{
+		ID: id,
+	}
 	c.Bind(&product)
-	product.ID, _ = strconv.ParseInt(c.Param("id"), 10, 64)
 
-	_, err := connections.DB.NamedExec("update products set title=:title, description=:description, price=:price where id=:id", &product)
+	err := product.Update()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -75,7 +71,11 @@ func updateProduct(c echo.Context) error {
 }
 
 func deleteProduct(c echo.Context) error {
-	_, err := connections.DB.Exec("delete from products where id = ?", c.Param("id"))
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	product := Product{
+		ID: id,
+	}
+	err := product.Delete()
 	if err != nil {
 		log.Fatalf("%+v\n", err)
 	}
