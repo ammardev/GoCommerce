@@ -1,6 +1,12 @@
 package cart
 
-import "github.com/labstack/echo/v4"
+import (
+	"database/sql"
+	"log"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+)
 
 func RegisterRoutes(router *echo.Echo) {
 	router.GET("/cart", getCart)
@@ -10,8 +16,23 @@ func RegisterRoutes(router *echo.Echo) {
 }
 
 func getCart(c echo.Context) error {
-	// TODO: Return the cart. Get the session id from the headers
-	return echo.ErrNotImplemented
+	cart := Cart{
+		SessionID: c.Request().Header.Get("X-CART"),
+	}
+
+	err := cart.Load()
+	if err == sql.ErrNoRows {
+		return echo.ErrNotFound
+	} else if err != nil {
+		log.Fatal(err)
+	}
+
+	err = cart.LoadItems()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return c.JSON(http.StatusOK, cart)
 }
 
 func addCartItem(c echo.Context) error {
