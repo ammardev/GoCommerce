@@ -16,7 +16,7 @@ create table if not exists carts (
 -- +goose StatementEnd
 
 -- +goose StatementBegin
-create table if not exists cart_products (
+create table if not exists cart_items (
     product_id int not null,
     cart_id int not null,
 
@@ -31,7 +31,7 @@ create table if not exists cart_products (
 
 -- +goose Down
 -- +goose StatementBegin
-drop table cart_products;
+drop table cart_items;
 -- +goose StatementEnd
 
 -- +goose StatementBegin

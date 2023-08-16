@@ -5,10 +5,10 @@ import "github.com/ammardev/ecommerce-playground/products"
 type Cart struct {
 	ID        int64
 	SessionID string
-	Products  []CartProduct
+	Items     []CartItem
 }
 
-type CartProduct struct {
+type CartItem struct {
 	Product         products.Product
 	Quantity        int
 	PriceOnAddition float64
