@@ -1,6 +1,10 @@
 package products
 
-import "github.com/ammardev/ecommerce-playground/connections"
+import (
+	"log"
+
+	"github.com/ammardev/ecommerce-playground/connections"
+)
 
 type Product struct {
 	ID          int64   `json:"id"`
@@ -36,6 +40,9 @@ func (product *Product) Delete() error {
 
 type Products []Product
 
-func (products *Products) Select() error {
-	return connections.DB.Select(products, "select * from products")
+func (products *Products) Select() {
+	err := connections.DB.Select(products, "select * from products")
+	if err != nil {
+		log.Fatal(err)
+	}
 }

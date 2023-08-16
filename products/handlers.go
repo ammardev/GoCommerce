@@ -20,10 +20,7 @@ func RegisterRoutes(router *echo.Echo) {
 func listProducts(c echo.Context) error {
 	products := Products{}
 
-	err := products.Select()
-	if err != nil {
-		log.Fatal(err)
-	}
+	products.Select()
 
 	return c.JSON(http.StatusOK, products)
 }
