@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/ammardev/ecommerce-playground/products"
 	"github.com/labstack/echo/v4"
 )
 
@@ -36,7 +37,34 @@ func getCart(c echo.Context) error {
 }
 
 func addCartItem(c echo.Context) error {
-	// TODO: Create a new cart if the header not exist. And add the item
+	type addToCartRequest struct {
+		ProductId int `json:"product_id"`
+		Quantity  int `json:"quantity"`
+	}
+
+	cart := Cart{
+		SessionID: c.Request().Header.Get("X-CART"),
+	}
+
+	if cart.SessionID == "" {
+		cart.NewSessionId()
+		cart.Save()
+	} else {
+		cart.Load()
+	}
+
+	request := &addToCartRequest{}
+	c.Bind(&request)
+
+	item := CartItem{
+		Product: products.Product{
+			ID: int64(request.ProductId),
+		},
+		Quantity: request.Quantity,
+	}
+
+	cart.AddItem(item)
+
 	return echo.ErrNotImplemented
 }
 
