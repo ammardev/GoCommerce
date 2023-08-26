@@ -18,6 +18,11 @@ func NewMySqlConnection() {
 		log.Fatal(err)
 	}
 
+	err = DB.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	setConnectionSettings()
 }
 
