@@ -14,7 +14,7 @@ type Product struct {
 }
 
 func (product *Product) Load() error {
-	return connections.DB.Get(&product, "select * from products where id = ?", product.ID)
+	return connections.DB.Get(product, "select * from products where id = ?", product.ID)
 }
 
 func (product *Product) Save() error {
