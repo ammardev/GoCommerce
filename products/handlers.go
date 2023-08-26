@@ -37,7 +37,7 @@ func showProduct(c echo.Context) error {
 	}
 
 	if err != nil {
-		log.Fatalf("%+v\n", err)
+		log.Panicf("%+v\n", err)
 	}
 
 	return c.JSON(http.StatusOK, product)
@@ -61,7 +61,7 @@ func updateProduct(c echo.Context) error {
 
 	err := product.Update()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	return c.JSON(http.StatusOK, product)
@@ -74,7 +74,7 @@ func deleteProduct(c echo.Context) error {
 	}
 	err := product.Delete()
 	if err != nil {
-		log.Fatalf("%+v\n", err)
+		log.Panicf("%+v\n", err)
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{
