@@ -30,18 +30,24 @@ func main() {
 }
 
 func customHTTPErrorHandler(err error, c echo.Context) {
-	c.Logger().Error(err)
+	skipLogging := false
 
 	switch err.(type) {
 	case *app.ValidationError:
 		c.JSON(http.StatusUnprocessableEntity, err)
+		skipLogging = true
 	case *echo.HTTPError:
 		c.JSON(http.StatusInternalServerError, echo.HTTPError{
 			Message: err.Error(),
 		})
+		skipLogging = true
 	default:
 		c.JSON(http.StatusInternalServerError, echo.HTTPError{
 			Message: "Internal Error",
 		})
+	}
+
+	if !skipLogging {
+		c.Logger().Error(err)
 	}
 }
