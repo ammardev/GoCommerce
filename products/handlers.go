@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ammardev/ecommerce-playground/app"
 	"github.com/labstack/echo/v4"
 )
 
@@ -44,10 +45,13 @@ func showProduct(c echo.Context) error {
 }
 
 func createProduct(c echo.Context) error {
-	product := Product{}
+	product := ProductRequest{}
 	c.Bind(&product)
 
-	product.Save()
+	err := app.Validate(c, product)
+	if err != nil {
+		return err
+	}
 
 	return c.JSON(http.StatusCreated, product)
 }
