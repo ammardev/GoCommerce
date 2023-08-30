@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/ammardev/gocommerce/internal/connections"
-	"github.com/ammardev/gocommerce/products"
+	"github.com/ammardev/gocommerce/pkg/products"
 )
 
 type Cart struct {

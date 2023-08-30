@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ammardev/gocommerce/products"
+	"github.com/ammardev/gocommerce/pkg/products"
 	"github.com/labstack/echo/v4"
 )
 
