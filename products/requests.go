@@ -1,6 +1,6 @@
 package products
 
-import "github.com/ammardev/ecommerce-playground/app"
+import "github.com/ammardev/gocommerce/app"
 
 type ProductRequest struct {
 	Title       string

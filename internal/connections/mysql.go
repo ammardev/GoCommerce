@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/ammardev/ecommerce-playground/app"
+	"github.com/ammardev/gocommerce/app"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )

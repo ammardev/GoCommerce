@@ -1,9 +1,9 @@
 package server
 
 import (
-	"github.com/ammardev/ecommerce-playground/app"
-	"github.com/ammardev/ecommerce-playground/cart"
-	"github.com/ammardev/ecommerce-playground/products"
+	"github.com/ammardev/gocommerce/app"
+	"github.com/ammardev/gocommerce/cart"
+	"github.com/ammardev/gocommerce/products"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )

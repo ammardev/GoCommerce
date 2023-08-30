@@ -1,4 +1,4 @@
-module github.com/ammardev/ecommerce-playground
+module github.com/ammardev/gocommerce
 
 go 1.20
 

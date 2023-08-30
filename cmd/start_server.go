@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/ammardev/ecommerce-playground/internal/connections"
-	"github.com/ammardev/ecommerce-playground/internal/server"
+	"github.com/ammardev/gocommerce/internal/connections"
+	"github.com/ammardev/gocommerce/internal/server"
 
 	_ "github.com/joho/godotenv/autoload"
 )

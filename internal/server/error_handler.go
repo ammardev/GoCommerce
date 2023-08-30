@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/ammardev/ecommerce-playground/app"
+	"github.com/ammardev/gocommerce/app"
 	"github.com/labstack/echo/v4"
 )
 

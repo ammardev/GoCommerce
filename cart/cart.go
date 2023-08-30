@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/ammardev/ecommerce-playground/internal/connections"
-	"github.com/ammardev/ecommerce-playground/products"
+	"github.com/ammardev/gocommerce/internal/connections"
+	"github.com/ammardev/gocommerce/products"
 )
 
 type Cart struct {
