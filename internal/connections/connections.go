@@ -1,5 +1,5 @@
 package connections
 
-func Close() {
+func CleanUp() {
 	DB.Close()
 }
