@@ -19,8 +19,6 @@ func main() {
 
 	router.Use(middleware.Recover())
 
-	app.NewValidator()
-
 	router.HTTPErrorHandler = customHTTPErrorHandler
 
 	products.RegisterRoutes(router)
@@ -33,7 +31,7 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	skipLogging := false
 
 	switch err.(type) {
-	case *app.ValidationError:
+	case *app.ValidationErrors:
 		c.JSON(http.StatusUnprocessableEntity, err)
 		skipLogging = true
 	case *echo.HTTPError:
