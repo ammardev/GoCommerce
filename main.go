@@ -27,7 +27,8 @@ func main() {
 	products.RegisterRoutes(router)
 	cart.RegisterRoutes(router)
 
-	router.Logger.Fatal(router.Start(":3000"))
+	address := app.GetEnv("HTTP_HOST", "127.0.0.1") + ":" + app.GetEnv("HTTP_PORT", "3000")
+	router.Logger.Fatal(router.Start(address))
 }
 
 func customHTTPErrorHandler(err error, c echo.Context) {
