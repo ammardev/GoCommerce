@@ -1,6 +1,8 @@
 package products
 
-import "github.com/ammardev/gocommerce/app"
+import (
+	"github.com/ammardev/gocommerce/internal/http"
+)
 
 type ProductRequest struct {
 	Title       string
@@ -8,8 +10,8 @@ type ProductRequest struct {
 	Price       float64
 }
 
-func (request *ProductRequest) Validate() *app.ValidationErrors {
-	errors := make(app.ValidationErrors)
+func (request *ProductRequest) Validate() *http.ValidationErrors {
+	errors := make(http.ValidationErrors)
 
 	if len(request.Title) == 0 {
 		errors["title"] = "The title is required"
