@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/ammardev/gocommerce/app"
+	"github.com/ammardev/gocommerce/internal"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
@@ -27,11 +27,11 @@ func NewMySqlConnection() {
 }
 
 func buildDatasource() string {
-	dataSourceName := app.GetEnv("DB_USER", "root") + ":"
-	dataSourceName += app.GetEnv("DB_PASSWORD", "") + "@tcp("
-	dataSourceName += app.GetEnv("DB_HOST", "127.0.0.1") + ":"
-	dataSourceName += app.GetEnv("DB_PORT", "3306") + ")/"
-	dataSourceName += app.GetEnv("DB_DATABASE", "")
+	dataSourceName := internal.GetEnv("DB_USER", "root") + ":"
+	dataSourceName += internal.GetEnv("DB_PASSWORD", "") + "@tcp("
+	dataSourceName += internal.GetEnv("DB_HOST", "127.0.0.1") + ":"
+	dataSourceName += internal.GetEnv("DB_PORT", "3306") + ")/"
+	dataSourceName += internal.GetEnv("DB_DATABASE", "")
 
 	return dataSourceName
 }
