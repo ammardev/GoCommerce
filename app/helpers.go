@@ -2,11 +2,11 @@ package app
 
 import "os"
 
-func GetEnv(name string, defaultValue string) string {
+func GetEnv(name string, defaultValue ...string) string {
 	value := os.Getenv(name)
 
 	if value == "" {
-		return defaultValue
+		return defaultValue[0]
 	}
 
 	return value
