@@ -7,6 +7,9 @@ import (
 	"github.com/ammardev/ecommerce-playground/cart"
 	"github.com/ammardev/ecommerce-playground/connections"
 	"github.com/ammardev/ecommerce-playground/products"
+
+	_ "github.com/joho/godotenv/autoload"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
