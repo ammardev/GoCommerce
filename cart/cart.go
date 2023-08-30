@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/ammardev/ecommerce-playground/connections"
+	"github.com/ammardev/ecommerce-playground/internal/connections"
 	"github.com/ammardev/ecommerce-playground/products"
 )
 

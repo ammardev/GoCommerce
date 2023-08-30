@@ -3,7 +3,7 @@ package products
 import (
 	"log"
 
-	"github.com/ammardev/ecommerce-playground/connections"
+	"github.com/ammardev/ecommerce-playground/internal/connections"
 )
 
 type Product struct {
