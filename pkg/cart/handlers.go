@@ -1,7 +1,6 @@
 package cart
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
@@ -22,9 +21,7 @@ func getCart(c echo.Context) error {
 	}
 
 	err := cart.Load()
-	if err == sql.ErrNoRows {
-		return echo.ErrNotFound
-	} else if err != nil {
+	if err != nil {
 		log.Fatal(err)
 	}
 
