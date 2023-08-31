@@ -16,9 +16,4 @@ func (product *Product) Update() error {
 	return err
 }
 
-func (product *Product) Delete() error {
-	_, err := connections.DB.Exec("delete from products where id = ?", product.ID)
-	return err
-}
-
 type Products []Product

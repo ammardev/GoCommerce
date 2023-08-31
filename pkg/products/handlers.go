@@ -84,15 +84,13 @@ func updateProduct(c echo.Context) error {
 
 func deleteProduct(c echo.Context) error {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	product := Product{
-		ID: id,
-	}
-	err := product.Delete()
+
+	err := repository.deleteProductById(id)
 	if err != nil {
-		log.Panicf("%+v\n", err)
+		return err
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{
-		"message": "Success",
+		"message": "Product deleted",
 	})
 }

@@ -55,3 +55,8 @@ func (repo *ProductRepository) createProductFromRequest(request *ProductRequest)
 		Price:       request.Price,
 	}, nil
 }
+
+func (repo *ProductRepository) deleteProductById(id int64) error {
+	_, err := connections.DB.Exec("delete from products where id = ?", id)
+	return err
+}
