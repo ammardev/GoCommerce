@@ -9,7 +9,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var (
+	repository ProductRepository
+)
+
 func RegisterRoutes(router *echo.Echo) {
+	repository = ProductRepository{}
+
 	router.GET("/products", listProducts)
 	router.GET("/products/:id", showProduct)
 	router.POST("/products", createProduct)
@@ -44,10 +50,18 @@ func showProduct(c echo.Context) error {
 }
 
 func createProduct(c echo.Context) error {
-	product := ProductRequest{}
-	c.Bind(&product)
+	request := ProductRequest{}
+	c.Bind(&request)
 
-	err := product.Validate()
+	var err error
+
+	err = request.Validate()
+	if err != nil {
+		return err
+	}
+
+	product, err := repository.createProductFromRequest(&request)
+
 	if err != nil {
 		return err
 	}
