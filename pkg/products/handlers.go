@@ -1,7 +1,6 @@
 package products
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 	"strconv"
@@ -33,17 +32,10 @@ func listProducts(c echo.Context) error {
 
 func showProduct(c echo.Context) error {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	product := Product{
-		ID: id,
-	}
 
-	err := product.Load()
-	if err == sql.ErrNoRows {
-		return echo.ErrNotFound
-	}
-
+	product, err := repository.SelectProductById(id)
 	if err != nil {
-		log.Panicf("%+v\n", err)
+		return err
 	}
 
 	return c.JSON(http.StatusOK, product)

@@ -13,10 +13,6 @@ type Product struct {
 	Price       float64 `json:"price"`
 }
 
-func (product *Product) Load() error {
-	return connections.DB.Get(product, "select * from products where id = ?", product.ID)
-}
-
 func (product *Product) Update() error {
 	_, err := connections.DB.NamedExec("update products set title=:title, description=:description, price=:price where id=:id", &product)
 	return err

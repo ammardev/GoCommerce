@@ -4,8 +4,18 @@ import "github.com/ammardev/gocommerce/internal/connections"
 
 type ProductRepository struct{}
 
-func (repo *ProductRepository) createProductFromRequest(request *ProductRequest) (*Product, error) {
+func (repo *ProductRepository) SelectProductById(id int64) (*Product, error) {
+	product := Product{}
 
+	err := connections.DB.Get(&product, "select * from products where id = ?", id)
+	if err != nil {
+		return nil, err
+	}
+	
+	return &product, nil
+}
+
+func (repo *ProductRepository) createProductFromRequest(request *ProductRequest) (*Product, error) {
 	result, err := connections.DB.NamedExec(`
 		insert into products (title, description, price)
 		values (:title, :description, :price)
