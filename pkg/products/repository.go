@@ -2,11 +2,14 @@ package products
 
 import (
 	"github.com/ammardev/gocommerce/internal/connections"
+	"github.com/ammardev/gocommerce/internal/persistence"
 )
 
 const ITEMS_PER_PAGE = 5
 
-type ProductRepository struct{}
+type ProductRepository struct {
+	persistence.BaseMySqlRepository
+}
 
 func (repo *ProductRepository) SelectPaginatedProducts(currentPage int) (*Products, error) {
 	products := Products{}
@@ -54,6 +57,21 @@ func (repo *ProductRepository) createProductFromRequest(request *ProductRequest)
 		Description: request.Description,
 		Price:       request.Price,
 	}, nil
+}
+
+func (repo *ProductRepository) updateProductFieldsFromRequest(id int64, request *UpdateRequest) error {
+	builder := repo.UpdatesBuilder
+
+	builder.Add("title", request.Title)
+	builder.Add("description", request.Description)
+	builder.Add("price", request.Price)
+
+	builder.Values = append(builder.Values, id)
+
+	query := "update products set " + builder.GetQuery() + " where id=?"
+	_, err := connections.DB.Exec(query, builder.Values...)
+
+	return err
 }
 
 func (repo *ProductRepository) deleteProductById(id int64) error {

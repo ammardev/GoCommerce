@@ -1,7 +1,6 @@
 package products
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -18,7 +17,7 @@ func RegisterRoutes(router *echo.Echo) {
 	router.GET("/products", listProducts)
 	router.GET("/products/:id", showProduct)
 	router.POST("/products", createProduct)
-	router.PUT("/products/:id", updateProduct)
+	router.PATCH("/products/:id", updateProduct)
 	router.DELETE("/products/:id", deleteProduct)
 }
 
@@ -69,17 +68,18 @@ func createProduct(c echo.Context) error {
 
 func updateProduct(c echo.Context) error {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	product := Product{
-		ID: id,
-	}
-	c.Bind(&product)
+	request := UpdateRequest{}
 
-	err := product.Update()
+	c.Bind(&request)
+
+	 err := repository.updateProductFieldsFromRequest(id, &request)
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
 
-	return c.JSON(http.StatusOK, product)
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Product Updated",
+	})
 }
 
 func deleteProduct(c echo.Context) error {

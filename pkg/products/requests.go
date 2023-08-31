@@ -27,3 +27,13 @@ func (request *ProductRequest) Validate() error {
 
 	return errors.Check()
 }
+
+type UpdateRequest struct {
+	Title       *string
+	Description *string
+	Price       *float64
+}
+
+func (request *UpdateRequest) Validate() error {
+	return nil
+}
