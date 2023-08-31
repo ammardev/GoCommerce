@@ -23,9 +23,15 @@ func RegisterRoutes(router *echo.Echo) {
 }
 
 func listProducts(c echo.Context) error {
-	products := Products{}
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	if page == 0 {
+		page = 1
+	}
 
-	products.Select()
+	products, err := repository.SelectPaginatedProducts(5, page)
+	if err != nil {
+		return err
+	}
 
 	return c.JSON(http.StatusOK, products)
 }

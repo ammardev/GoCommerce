@@ -1,8 +1,6 @@
 package products
 
 import (
-	"log"
-
 	"github.com/ammardev/gocommerce/internal/connections"
 )
 
@@ -24,10 +22,3 @@ func (product *Product) Delete() error {
 }
 
 type Products []Product
-
-func (products *Products) Select() {
-	err := connections.DB.Select(products, "select * from products")
-	if err != nil {
-		log.Fatal(err)
-	}
-}

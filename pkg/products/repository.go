@@ -1,8 +1,23 @@
 package products
 
-import "github.com/ammardev/gocommerce/internal/connections"
+import (
+	"github.com/ammardev/gocommerce/internal/connections"
+)
 
 type ProductRepository struct{}
+
+func (repo *ProductRepository) SelectPaginatedProducts(itemsPerPage int, currentPage int) (*Products, error) {
+	products := Products{}
+
+	offset := (currentPage - 1) * itemsPerPage
+
+	err := connections.DB.Select(&products, "select * from products limit ? offset ?", itemsPerPage, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	return &products, nil
+}
 
 func (repo *ProductRepository) SelectProductById(id int64) (*Product, error) {
 	product := Product{}
@@ -11,7 +26,7 @@ func (repo *ProductRepository) SelectProductById(id int64) (*Product, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &product, nil
 }
 
