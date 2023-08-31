@@ -28,7 +28,7 @@ func listProducts(c echo.Context) error {
 		page = 1
 	}
 
-	products, err := repository.SelectPaginatedProducts(5, page)
+	products, err := repository.SelectPaginatedProducts(page)
 	if err != nil {
 		return err
 	}

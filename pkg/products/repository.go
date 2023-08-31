@@ -4,14 +4,16 @@ import (
 	"github.com/ammardev/gocommerce/internal/connections"
 )
 
+const ITEMS_PER_PAGE = 5
+
 type ProductRepository struct{}
 
-func (repo *ProductRepository) SelectPaginatedProducts(itemsPerPage int, currentPage int) (*Products, error) {
+func (repo *ProductRepository) SelectPaginatedProducts(currentPage int) (*Products, error) {
 	products := Products{}
 
-	offset := (currentPage - 1) * itemsPerPage
+	offset := (currentPage - 1) * ITEMS_PER_PAGE
 
-	err := connections.DB.Select(&products, "select * from products limit ? offset ?", itemsPerPage, offset)
+	err := connections.DB.Select(&products, "select * from products limit ? offset ?", ITEMS_PER_PAGE, offset)
 	if err != nil {
 		return nil, err
 	}
