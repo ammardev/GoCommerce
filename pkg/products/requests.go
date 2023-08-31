@@ -25,5 +25,5 @@ func (request *ProductRequest) Validate() *http.ValidationErrors {
 		errors["price"] = "The price should be greater than zero"
 	}
 
-	return &errors
+	return errors.Check()
 }
