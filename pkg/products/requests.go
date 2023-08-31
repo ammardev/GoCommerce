@@ -10,7 +10,7 @@ type ProductRequest struct {
 	Price       float64
 }
 
-func (request *ProductRequest) Validate() *http.ValidationErrors {
+func (request *ProductRequest) Validate() error {
 	errors := make(http.ValidationErrors)
 
 	if len(request.Title) == 0 {
