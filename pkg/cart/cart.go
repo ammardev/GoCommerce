@@ -47,25 +47,6 @@ func (cart *Cart) Save() error {
 	return err
 }
 
-func (cart *Cart) LoadItems() error {
-	query := `
-		select cart_items.price as price_on_addition, cart_items.quantity, products.* from cart_items
-		join products on products.id = cart_items.product_id
-		where cart_id=?
-	`
-
-	pivotRecords := []cartItemPivot{}
-
-	err := connections.DB.Unsafe().Select(&pivotRecords, query, cart.ID)
-
-	for _, record := range pivotRecords {
-		record.CartItem.Product = record.Product
-		cart.Items = append(cart.Items, record.CartItem)
-	}
-
-	return err
-}
-
 func (cart *Cart) NewSessionId() {
 	// TODO: Generate the session id
 	cart.SessionID = "TODO"
