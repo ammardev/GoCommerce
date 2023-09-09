@@ -10,7 +10,7 @@ import (
 
 type Cart struct {
 	ID        int64      `json:"id"`
-	SessionID string     `json:"session_id"`
+    SessionID string     `json:"session_id" db:"session_id"`
 	Items     []CartItem `json:"items"`
 }
 

@@ -1,12 +1,13 @@
 package cart
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/ammardev/gocommerce/pkg/products"
 	"github.com/labstack/echo/v4"
 )
+
+var repository CartRepository
 
 func RegisterRoutes(router *echo.Echo) {
 	router.GET("/cart", getCart)
@@ -16,18 +17,9 @@ func RegisterRoutes(router *echo.Echo) {
 }
 
 func getCart(c echo.Context) error {
-	cart := Cart{
-		SessionID: c.Request().Header.Get("X-CART"),
-	}
-
-	err := cart.Load()
+	cart, err := repository.GetCartBySessionId(c.Request().Header.Get("X-CART"))
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = cart.LoadItems()
-	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	return c.JSON(http.StatusOK, cart)
