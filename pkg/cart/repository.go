@@ -120,6 +120,10 @@ func (repo *CartRepository) removeCartItem(sessionId string, productId int64) er
 }
 
 func (repo *CartRepository) setQuantity(sessionId string, productId int64, quantity int) error {
+    if quantity == 0 {
+        return repo.removeCartItem(sessionId, productId)
+    }
+
     updateQuery := `
         update cart_items
         join carts on carts.id = cart_items.cart_id
