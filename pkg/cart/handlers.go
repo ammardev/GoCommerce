@@ -27,7 +27,7 @@ func addCartItem(c echo.Context) error {
 	request := &addToCartRequest{}
 	c.Bind(&request)
 
-    repository.addCartItem(c.Request().Header.Get("X-CART"), *request)
+    repository.addCartItem(*request)
 
 	return c.JSON(net_http.StatusOK, map[string]string{
         "status": "Success",

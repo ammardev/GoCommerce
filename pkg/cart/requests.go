@@ -1,8 +1,9 @@
 package cart
 
-type AddToCartRequest struct {
+type addToCartRequest struct {
     ProductId int `json:"product_id"`
     Quantity  int `json:"quantity"`
+    SessionId string `header:"X-CART"`
 }
 
 
