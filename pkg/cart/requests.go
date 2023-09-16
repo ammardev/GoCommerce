@@ -5,3 +5,9 @@ type AddToCartRequest struct {
     Quantity  int `json:"quantity"`
 }
 
+
+type setCartItemQuantityRequest struct {
+    ProductId int64 `param:"cartItemId"`
+    SessionId string `header:"X-CART"`
+    Quantity int `json:"quantity"`
+}

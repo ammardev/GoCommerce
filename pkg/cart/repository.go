@@ -101,3 +101,19 @@ func (repo *CartRepository) addCartItem(sessionId string, request AddToCartReque
     return nil
 }
 
+func (repo *CartRepository) setQuantity(sessionId string, productId int64, quantity int) error {
+    updateQuery := `
+        update cart_items
+        join carts on carts.id = cart_items.cart_id
+        set quantity = ?
+        where
+            carts.session_id = ? and
+            cart_items.product_id = ?
+    `
+    _, err := connections.DB.Exec(updateQuery, quantity, sessionId, productId)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}

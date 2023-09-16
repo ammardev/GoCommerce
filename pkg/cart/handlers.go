@@ -36,7 +36,18 @@ func addCartItem(c echo.Context) error {
 }
 
 func changeCartItemQuantity(c echo.Context) error {
-	return echo.ErrNotImplemented
+    request := &setCartItemQuantityRequest{}
+    (&echo.DefaultBinder{}).Bind(request, c)
+    (&echo.DefaultBinder{}).BindHeaders(c, request)
+
+    err := repository.setQuantity(request.SessionId, request.ProductId, request.Quantity)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+        "status": "Success",
+    })
 }
 
 func deleteCartItem(c echo.Context) error {
