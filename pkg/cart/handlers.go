@@ -49,5 +49,15 @@ func changeCartItemQuantity(c echo.Context) error {
 }
 
 func deleteCartItem(c echo.Context) error {
-	return echo.ErrNotImplemented
+    request := &deleteCartItemRequest{}
+    c.Bind(request)
+
+    err := repository.removeCartItem(request.SessionId, request.ProductId)
+    if err != nil {
+        return err
+    }
+
+    return c.JSON(net_http.StatusOK, map[string]string{
+        "status": "Success",
+    })
 }

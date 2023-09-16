@@ -101,6 +101,24 @@ func (repo *CartRepository) addCartItem(sessionId string, request AddToCartReque
     return nil
 }
 
+func (repo *CartRepository) removeCartItem(sessionId string, productId int64) error {
+    deleteQuery := `
+        delete cart_items
+        from cart_items
+        join carts on carts.id = cart_items.cart_id
+        where
+            carts.session_id = ? and
+            cart_items.product_id = ?
+    `
+
+    _, err := connections.DB.Exec(deleteQuery, sessionId, productId)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
+
 func (repo *CartRepository) setQuantity(sessionId string, productId int64, quantity int) error {
     updateQuery := `
         update cart_items

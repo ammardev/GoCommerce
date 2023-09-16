@@ -11,3 +11,8 @@ type setCartItemQuantityRequest struct {
     SessionId string `header:"X-CART"`
     Quantity int `json:"quantity"`
 }
+
+type deleteCartItemRequest struct {
+    ProductId int64 `param:"cartItemId"`
+    SessionId string `header:"X-CART"`
+}
