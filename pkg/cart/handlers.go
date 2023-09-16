@@ -2,7 +2,6 @@ package cart
 
 import (
     net_http "net/http"
-	"github.com/ammardev/gocommerce/internal/http"
 	"github.com/labstack/echo/v4"
 )
 
@@ -37,7 +36,7 @@ func addCartItem(c echo.Context) error {
 
 func changeCartItemQuantity(c echo.Context) error {
     request := &setCartItemQuantityRequest{}
-    c.(*http.Context).Bind(request)
+    c.Bind(request)
 
     err := repository.setQuantity(request.SessionId, request.ProductId, request.Quantity)
 	if err != nil {
