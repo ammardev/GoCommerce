@@ -3,7 +3,6 @@ package cart
 import (
 	"net/http"
 
-	"github.com/ammardev/gocommerce/pkg/products"
 	"github.com/labstack/echo/v4"
 )
 
@@ -17,7 +16,7 @@ func RegisterRoutes(router *echo.Echo) {
 }
 
 func getCart(c echo.Context) error {
-	cart, err := repository.GetCartBySessionId(c.Request().Header.Get("X-CART"))
+	cart, err := repository.GetCartWithItemsBySessionId(c.Request().Header.Get("X-CART"))
 	if err != nil {
 		return err
 	}
@@ -26,35 +25,14 @@ func getCart(c echo.Context) error {
 }
 
 func addCartItem(c echo.Context) error {
-	type addToCartRequest struct {
-		ProductId int `json:"product_id"`
-		Quantity  int `json:"quantity"`
-	}
-
-	cart := Cart{
-		SessionID: c.Request().Header.Get("X-CART"),
-	}
-
-	if cart.SessionID == "" {
-		cart.NewSessionId()
-		cart.Save()
-	} else {
-		cart.Load()
-	}
-
-	request := &addToCartRequest{}
+	request := &AddToCartRequest{}
 	c.Bind(&request)
 
-	item := CartItem{
-		Product: products.Product{
-			ID: int64(request.ProductId),
-		},
-		Quantity: request.Quantity,
-	}
+    repository.addCartItem(c.Request().Header.Get("X-CART"), *request)
 
-	cart.AddItem(item)
-
-	return echo.ErrNotImplemented
+	return c.JSON(http.StatusOK, map[string]string{
+        "status": "Success",
+    })
 }
 
 func changeCartItemQuantity(c echo.Context) error {

@@ -1,9 +1,12 @@
 package cart
 
 import (
+	"database/sql"
+
 	"github.com/ammardev/gocommerce/internal/connections"
 	"github.com/ammardev/gocommerce/internal/persistence"
 	"github.com/ammardev/gocommerce/pkg/products"
+	"github.com/go-sql-driver/mysql"
 )
 
 type CartRepository struct {
@@ -11,19 +14,28 @@ type CartRepository struct {
 }
 
 func (repo *CartRepository) GetCartBySessionId(sessionId string) (*Cart, error) {
-	cart := Cart{}
+    cart := Cart{}
 
-	err := connections.DB.Get(&cart, "select * from carts where session_id=? limit 1", sessionId)
-	if err != nil {
-		return nil, err
-	}
+    err := connections.DB.Get(&cart, "select * from carts where session_id=? limit 1", sessionId)
+    if err != nil {
+        return nil, err
+    }
+
+    return &cart, nil
+}
+
+func (repo *CartRepository) GetCartWithItemsBySessionId(sessionId string) (*Cart, error) {
+    cart, err := repo.GetCartBySessionId(sessionId)
+    if err != nil {
+        return nil, err
+    }
 
 	cart.Items, err = repo.getCartItems(cart.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &cart, nil
+	return cart, nil
 }
 
 type cartItemResults struct {
@@ -55,3 +67,32 @@ func (repo *CartRepository) getCartItems(cartId int64) ([]CartItem, error) {
 
     return items, nil
 }
+
+func (repo *CartRepository) addCartItem(sessionId string, request AddToCartRequest) error {
+    cart, err := repo.GetCartBySessionId(sessionId)
+    if err == sql.ErrNoRows {
+        // TODO: Create new cart
+        err = nil
+    } else if err != nil {
+        return err
+    }
+
+    productsRepo := products.ProductRepository{}
+    product, err := productsRepo.SelectProductById(int64(request.ProductId))
+    if err != nil {
+        return err
+    }
+
+	insertionQuery := "insert into cart_items (product_id, cart_id, quantity, price) values (?, ?, ?, ?)"
+    _, err = connections.DB.Exec(insertionQuery, product.ID, cart.ID, request.Quantity, product.Price)
+    if mysqlerr, ok := err.(*mysql.MySQLError); ok && mysqlerr.Number == 1062 {
+        err = nil
+        updateQuery := "update cart_items set quantity = quantity + ? where cart_id=? and product_id=?"
+        _, err = connections.DB.Exec(updateQuery, request.Quantity, cart.ID, product.ID)
+    } else if err != nil {
+        return err
+    }
+
+    return nil
+}
+
