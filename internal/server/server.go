@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/ammardev/gocommerce/internal"
+	"github.com/ammardev/gocommerce/internal/http"
 	"github.com/ammardev/gocommerce/pkg/cart"
 	"github.com/ammardev/gocommerce/pkg/products"
 	"github.com/labstack/echo/v4"
@@ -12,6 +13,8 @@ func Start() {
 	router := echo.New()
 
 	router.Use(middleware.Recover())
+    router.Use(http.ContextMiddleware)
+
 
 	router.HTTPErrorHandler = httpErrorHandler
 

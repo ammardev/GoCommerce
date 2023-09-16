@@ -1,8 +1,8 @@
 package cart
 
 import (
-	"net/http"
-
+    net_http "net/http"
+	"github.com/ammardev/gocommerce/internal/http"
 	"github.com/labstack/echo/v4"
 )
 
@@ -21,7 +21,7 @@ func getCart(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, cart)
+	return c.JSON(net_http.StatusOK, cart)
 }
 
 func addCartItem(c echo.Context) error {
@@ -30,22 +30,21 @@ func addCartItem(c echo.Context) error {
 
     repository.addCartItem(c.Request().Header.Get("X-CART"), *request)
 
-	return c.JSON(http.StatusOK, map[string]string{
+	return c.JSON(net_http.StatusOK, map[string]string{
         "status": "Success",
     })
 }
 
 func changeCartItemQuantity(c echo.Context) error {
     request := &setCartItemQuantityRequest{}
-    (&echo.DefaultBinder{}).Bind(request, c)
-    (&echo.DefaultBinder{}).BindHeaders(c, request)
+    c.(*http.Context).Bind(request)
 
     err := repository.setQuantity(request.SessionId, request.ProductId, request.Quantity)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{
+	return c.JSON(net_http.StatusOK, map[string]string{
         "status": "Success",
     })
 }
