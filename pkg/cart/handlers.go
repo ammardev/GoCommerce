@@ -24,7 +24,7 @@ func getCart(c echo.Context) error {
 }
 
 func addCartItem(c echo.Context) error {
-	request := &AddToCartRequest{}
+	request := &addToCartRequest{}
 	c.Bind(&request)
 
     repository.addCartItem(c.Request().Header.Get("X-CART"), *request)
