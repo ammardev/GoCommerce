@@ -3,6 +3,7 @@ package products
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,6 +16,7 @@ func RegisterRoutes(router *echo.Echo) {
 	repository = ProductRepository{}
 
 	router.GET("/products", listProducts)
+	router.GET("/products/stream", productsStream)
 	router.GET("/products/:id", showProduct)
 	router.POST("/products", createProduct)
 	router.PATCH("/products/:id", updateProduct)
@@ -33,6 +35,40 @@ func listProducts(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, products)
+}
+
+func productsStream(c echo.Context) error {
+    // SSE headers
+    c.Response().Header().Add("Content-Type", "text/event-stream")
+    c.Response().Header().Set("Cache-Control", "no-cache")
+    c.Response().Header().Set("Connection", "keep-alive")
+
+    // Make messages channel
+    sseChannel := make(chan string)
+
+    go func() {
+        for {
+            sseChannel <- "Hello"
+            time.Sleep(5 * time.Second)
+        }
+    }()
+
+    // Close the messages channel
+    defer func() {
+        close(sseChannel)
+        sseChannel = nil
+    }()
+
+    for {
+        select {
+        case message := <- sseChannel:
+            c.Response().Writer.Write([]byte("data: " + message + "\n\n"))
+            c.Response().Flush()
+        case <- c.Request().Context().Done():
+            // Connection closed
+            return nil
+        }
+    }
 }
 
 func showProduct(c echo.Context) error {
