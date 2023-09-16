@@ -71,8 +71,13 @@ func (repo *CartRepository) getCartItems(cartId int64) ([]CartItem, error) {
 func (repo *CartRepository) addCartItem(sessionId string, request AddToCartRequest) error {
     cart, err := repo.GetCartBySessionId(sessionId)
     if err == sql.ErrNoRows {
-        // TODO: Create new cart
         err = nil
+        cart = &Cart{
+            SessionID: sessionId,
+        }
+
+        result, _ := connections.DB.Exec("insert into carts (session_id) values (?)", cart.SessionID)
+        cart.ID, _ = result.LastInsertId()
     } else if err != nil {
         return err
     }
