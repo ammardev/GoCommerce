@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
-	connections.NewMySqlConnection()
 	defer connections.CleanUp()
+
+	connections.NewMySqlConnection()
+	connections.NewRedisConnection()
 
 	server.Start()
 }
