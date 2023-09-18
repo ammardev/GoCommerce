@@ -2,16 +2,11 @@ package http
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/redis/go-redis/v9"
 )
 
 type ServerSentEventManager struct {
-    channel chan string
-}
-
-func (sse *ServerSentEventManager) NewChannel() *ServerSentEventManager {
-    sse.channel = make(chan string, 50)
-
-    return sse
+    Channel <- chan *redis.Message
 }
 
 func (sse *ServerSentEventManager) SetHeadersForContext(c echo.Context) {
@@ -20,15 +15,11 @@ func (sse *ServerSentEventManager) SetHeadersForContext(c echo.Context) {
     c.Response().Header().Set("Connection", "keep-alive")
 }
 
-func (sse *ServerSentEventManager) SendMessage(message string) {
-    sse.channel <- message
-}
-
 func (sse *ServerSentEventManager) Serve(c echo.Context) {
     for {
         select {
-        case message := <- sse.channel:
-            c.Response().Writer.Write([]byte("data: " + message + "\n\n"))
+        case message := <- sse.Channel:
+            c.Response().Writer.Write([]byte("data: " + message.Payload + "\n\n"))
             c.Response().Flush()
         case <- c.Request().Context().Done():
             // Connection closed

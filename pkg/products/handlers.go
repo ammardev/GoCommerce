@@ -5,18 +5,17 @@ import (
 	net_http "net/http"
 	"strconv"
 
+	"github.com/ammardev/gocommerce/internal/connections"
 	"github.com/ammardev/gocommerce/internal/http"
 	"github.com/labstack/echo/v4"
 )
 
 var (
 	repository ProductRepository
-    productsSSE *http.ServerSentEventManager
 )
 
 func RegisterRoutes(router *echo.Echo) {
 	repository = ProductRepository{}
-    productsSSE = (&http.ServerSentEventManager{}).NewChannel()
 
 	router.GET("/products", listProducts)
 	router.GET("/products/stream", productsStream)
@@ -41,9 +40,15 @@ func listProducts(c echo.Context) error {
 }
 
 func productsStream(c echo.Context) error {
-    productsSSE.SetHeadersForContext(c)
+    sse := http.ServerSentEventManager{}
+    sse.SetHeadersForContext(c)
 
-    productsSSE.Serve(c)
+    redisSubscription := connections.Redis.Subscribe(c.Request().Context(), "products")
+    defer redisSubscription.Close()
+
+    sse.Channel = redisSubscription.Channel()
+
+    sse.Serve(c)
 
     return nil
 }
@@ -71,12 +76,11 @@ func createProduct(c echo.Context) error {
 	}
 
 	product, err := repository.createProductFromRequest(&request)
-
 	if err != nil {
 		return err
 	}
 
-    productsSSE.SendMessage(fmt.Sprintf("New Product: %d", product.ID))
+    connections.Redis.Publish(c.Request().Context(), "products", fmt.Sprintf("New Product: %d", product.ID))
 
 	return c.JSON(net_http.StatusCreated, product)
 }
@@ -92,7 +96,7 @@ func updateProduct(c echo.Context) error {
 		return err
 	}
 
-    productsSSE.SendMessage(fmt.Sprintf("Product Updated: %d", id))
+    connections.Redis.Publish(c.Request().Context(), "products", "New Product: " + c.Param("id"))
 
 	return c.JSON(net_http.StatusOK, map[string]string{
 		"message": "Product Updated",
