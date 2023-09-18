@@ -9,6 +9,11 @@ services:
     volumes:
       - mysql:/var/lib/mysql
 
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+
 
 volumes:
   mysql:
