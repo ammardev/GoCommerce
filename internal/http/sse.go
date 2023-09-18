@@ -8,11 +8,16 @@ type ServerSentEventManager struct {
     channel chan string
 }
 
+func (sse *ServerSentEventManager) NewChannel() *ServerSentEventManager {
+    sse.channel = make(chan string, 50)
+
+    return sse
+}
+
 func (sse *ServerSentEventManager) SetHeadersForContext(c echo.Context) {
     c.Response().Header().Add("Content-Type", "text/event-stream")
     c.Response().Header().Set("Cache-Control", "no-cache")
     c.Response().Header().Set("Connection", "keep-alive")
-    sse.channel = make(chan string)
 }
 
 func (sse *ServerSentEventManager) SendMessage(message string) {
@@ -20,8 +25,6 @@ func (sse *ServerSentEventManager) SendMessage(message string) {
 }
 
 func (sse *ServerSentEventManager) Serve(c echo.Context) {
-    defer sse.close()
-
     for {
         select {
         case message := <- sse.channel:
@@ -34,7 +37,3 @@ func (sse *ServerSentEventManager) Serve(c echo.Context) {
     }
 }
 
-func (sse *ServerSentEventManager) close() {
-    close(sse.channel)
-    sse.channel = nil
-}

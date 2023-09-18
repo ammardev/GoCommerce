@@ -1,9 +1,9 @@
 package products
 
 import (
+	"fmt"
 	net_http "net/http"
 	"strconv"
-	"time"
 
 	"github.com/ammardev/gocommerce/internal/http"
 	"github.com/labstack/echo/v4"
@@ -11,10 +11,12 @@ import (
 
 var (
 	repository ProductRepository
+    productsSSE *http.ServerSentEventManager
 )
 
 func RegisterRoutes(router *echo.Echo) {
 	repository = ProductRepository{}
+    productsSSE = (&http.ServerSentEventManager{}).NewChannel()
 
 	router.GET("/products", listProducts)
 	router.GET("/products/stream", productsStream)
@@ -39,18 +41,9 @@ func listProducts(c echo.Context) error {
 }
 
 func productsStream(c echo.Context) error {
-    sse := http.ServerSentEventManager{}
+    productsSSE.SetHeadersForContext(c)
 
-    sse.SetHeadersForContext(c)
-
-    go func() {
-        for {
-            sse.SendMessage("Hello")
-            time.Sleep(5 * time.Second)
-        }
-    }()
-
-    sse.Serve(c)
+    productsSSE.Serve(c)
 
     return nil
 }
@@ -83,6 +76,8 @@ func createProduct(c echo.Context) error {
 		return err
 	}
 
+    productsSSE.SendMessage(fmt.Sprintf("New Product: %d", product.ID))
+
 	return c.JSON(net_http.StatusCreated, product)
 }
 
@@ -96,6 +91,8 @@ func updateProduct(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+    productsSSE.SendMessage(fmt.Sprintf("Product Updated: %d", id))
 
 	return c.JSON(net_http.StatusOK, map[string]string{
 		"message": "Product Updated",
