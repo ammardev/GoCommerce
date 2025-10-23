@@ -1,6 +1,8 @@
 package server
 
 import (
+	"io"
+
 	"github.com/ammardev/gocommerce/internal"
 	"github.com/ammardev/gocommerce/internal/http"
 	"github.com/ammardev/gocommerce/pkg/cart"
@@ -15,6 +17,16 @@ func Start() {
 	router.Use(middleware.Recover())
     router.Use(http.ContextMiddleware)
 
+
+    router.POST("/send", func(c echo.Context) error {
+        body, _ := io.ReadAll(c.Request().Body)
+
+        return c.JSON(200, map[string]any{
+            "message": "HI!",
+            "headers": c.Request().Header,
+            "body": string(body),
+        })
+    })
 
 	router.HTTPErrorHandler = httpErrorHandler
 
